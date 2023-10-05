@@ -5,38 +5,43 @@ import auth from '../../firebase/firebase.config';
 const Register = () => {
     const [regError, setRegError] = useState('');
     const [success, setSuccess] = useState('');
-    const handelRegister = e =>{
+    const [showPassword, setShowPassword] = useState(false);
+    const handelRegister = e => {
         e.preventDefault();
         const email = e.target.email.value;
         const password = e.target.password.value;
         console.log(email, password);
-        
-        if(password.length < 6){
+
+        if (password.length < 6) {
             setRegError("Password must be 6 character needed!");
+            // return;
+        }
+        else if (!/[A-Z]/.test(password)) {
+            setRegError("Your password should at least one Uppercase letter!");
             return;
         }
 
         setRegError('');
         setSuccess('');
-        
+
         createUserWithEmailAndPassword(auth, email, password)
-        .then((result) =>{
-            // const result = result.user;
-            console.log(result.user);
-            setSuccess("Data registration successful!");
-        })
-        .catch((error) =>{
-            console.error(error);
-            setRegError(error.message);
-        })
+            .then((result) => {
+                // const result = result.user;
+                console.log(result.user);
+                setSuccess("Data registration successful!");
+            })
+            .catch((error) => {
+                console.error(error);
+                setRegError(error.message);
+            })
     }
     return (
         <div className="card flex-shrink-0 w-full max-w-sm shadow-2xl bg-base-100 mx-auto">
             <h3 className='text-3xl text-center relative top-6'>Please Register</h3>
             {
-              success && <h3 className='text-[green] text-center relative top-8'>{success}</h3>  
+                success && <h3 className='text-[green] text-center relative top-8'>{success}</h3>
             }
-            
+
             <form onSubmit={handelRegister} className="card-body">
                 <div className="form-control">
                     <label className="label">
@@ -48,7 +53,12 @@ const Register = () => {
                     <label className="label">
                         <span className="label-text">Password</span>
                     </label>
-                    <input type="password" name="password" placeholder="password" className="input input-bordered" required />
+                    <input
+                        type={showPassword ? "text" : "password"}
+                        name="password"
+                        placeholder="password"
+                        className="input input-bordered" required />
+                    <span onClick={() => setShowPassword(!showPassword)}>Show Password</span>
                     <label className="label">
                         <a href="#" className="label-text-alt link link-hover">Forgot password?</a>
                     </label>
